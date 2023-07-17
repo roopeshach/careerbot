@@ -28,8 +28,3 @@ class IndustryInsight(models.Model):
 class UserFeedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     feedback = models.TextField()
-
-class Admin(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=255)
-
