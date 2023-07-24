@@ -27,3 +27,11 @@ def upload_career_assessment_data(request):
     print("Career assessment data uploaded successfully.")
 
     return render(request, 'Main/index.html')
+
+def career_assessment(request):
+    questions = CareerAssesmentQuestion.objects.filter(is_active=True)
+    context = {
+        'questions': questions,
+    }
+    return render(request, 'Main/career_assessment.html', context)
+
