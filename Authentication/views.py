@@ -31,7 +31,7 @@ def register_user(request):
 
 def login_user(request):
     if request.user.is_authenticated:
-        return redirect('quiz:index')
+        return redirect('Main:index')
     else:
         if request.method == 'POST':
             username = request.POST.get('username')
@@ -41,7 +41,7 @@ def login_user(request):
             if user is not None:
                 login(request, user)
                 
-                return redirect('quiz:index')
+                return redirect('Main:index')
                 
             else:
                 context = {
@@ -58,5 +58,3 @@ def logout_user(request):
     return redirect('authentication:login')
 
 
-def index(request):
-    return render(request, 'authentication/index.html')

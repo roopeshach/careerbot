@@ -1,0 +1,85 @@
+{
+    "questions": [
+      {
+        "question": "What are your primary skills?",
+        "answers": [
+          "Technical skills",
+          "Leadership and management",
+          "Creativity and innovation"
+        ]
+      },
+      {
+        "question": "What type of work environment do you prefer?",
+        "answers": [
+          "Fast-paced and dynamic",
+          "Structured and organized",
+          "Remote and flexible"
+        ]
+      },
+      {
+        "question": "What motivates you in your work?",
+        "answers": [
+          "Challenging tasks",
+          "Recognition and rewards",
+          "Making a positive impact"
+        ]
+      },
+      {
+        "question": "How do you handle stressful situations?",
+        "answers": [
+          "Stay calm and focused",
+          "Seek support from others",
+          "Take breaks and relax"
+        ]
+      },
+      {
+        "question": "What are your career goals for the next 5 years?",
+        "answers": [
+          "Advance to a managerial position",
+          "Change to a different industry",
+          "Start my own business"
+        ]
+      },
+      {
+        "question": "How do you approach problem-solving?",
+        "answers": [
+          "Analyzing data and facts",
+          "Brainstorming creative solutions",
+          "Collaborating with others"
+        ]
+      },
+      {
+        "question": "What is your preferred communication style?",
+        "answers": [
+          "Direct and assertive",
+          "Supportive and empathetic",
+          "Adaptable depending on the situation"
+        ]
+      },
+      {
+        "question": "What do you value the most in a job?",
+        "answers": [
+          "Opportunities for growth",
+          "Work-life balance",
+          "Job stability"
+        ]
+      },
+      {
+        "question": "How do you handle feedback and criticism?",
+        "answers": [
+          "Take it as a learning opportunity",
+          "Defend my position",
+          "Consider the source and validity"
+        ]
+      },
+      {
+        "question": "How do you prioritize tasks and manage time?",
+        "answers": [
+          "Create a to-do list and set deadlines",
+          "Focus on the most urgent tasks first",
+          "Adapt as priorities change"
+        ]
+      }
+    ]
+  }
+  
