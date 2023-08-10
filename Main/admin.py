@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import CareerAssessment, CareerSuggestion, Resume, InterviewTip, IndustryInsight, UserFeedback, CareerAssesmentQuestion, CareerAssesmentAnswer
+from .models import  CareerSuggestion, Resume, InterviewTip, IndustryInsight, UserFeedback, CareerAssesmentQuestion, CareerAssesmentAnswer, CareerAssessmentResponse
 from django.utils.html import format_html
 
 admin.site.register(CareerSuggestion)
@@ -38,6 +38,6 @@ class CareerAssesmentAdmin(admin.ModelAdmin):
 
     # inlines = [CareerAssementQuestionTabularInline]
 
-admin.site.register(CareerAssessment, CareerAssesmentAdmin)
 
+admin.site.register(CareerAssessmentResponse)
 

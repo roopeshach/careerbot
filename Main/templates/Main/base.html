@@ -14,8 +14,11 @@ href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css"
 rel="stylesheet"
 />
   
+
   <!--Main Navigation-->
   <header>
+
+    <title> CAREER BOT </title>
     <!-- Intro settings -->
     <style>
       #intro {
@@ -28,8 +31,8 @@ rel="stylesheet"
     <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
       <div class="container-fluid">
         <!-- Navbar brand -->
-        <a class="navbar-brand text-primary text-bold" href="/">
-         <h4> CareerBot </h4>
+        <a class="navbar-brand text-primary text-bold " href="/">
+         <h1> CAREER BOT </h1>
         </a>
         <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarExample01"
           aria-controls="navbarExample01" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,12 +45,23 @@ rel="stylesheet"
               <a class="nav-link" href="{% url 'Main:career-assesment' %}" rel="nofollow"
                 >Career Assesment</a>
             </li>
+         
             <li class="nav-item">
-              <a class="nav-link" href="#" >Career Suggestions</a>
+              <a class="nav-link" href="/chat/career_suggestion" >Career Suggestion</a>
             </li>
+
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'Main:chat' %}" > CHAT Now</a>
+              <a class="nav-link" href="/chat/industry_insights" >Industry Insights </a>
             </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/chat/interview_tips" >Interview Tips</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/chat/resume_tips" >Resume Tips </a>
+            </li>
+
           </ul>
 
           <ul class="navbar-nav d-flex flex-row">
@@ -55,27 +69,14 @@ rel="stylesheet"
             <li class="nav-item me-3 me-lg-0">
               <a class="nav-link" href="#" rel="nofollow"
                 target="_blank">
-                <i class="fab fa-youtube"></i>
+                <i class="fas fa-user"></i>
               </a>
             </li>
+            
             <li class="nav-item me-3 me-lg-0">
-              <a class="nav-link" href="#" rel="nofollow" target="_blank">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-            </li>
-            <li class="nav-item me-3 me-lg-0">
-              <a class="nav-link" href="#" rel="nofollow" target="_blank">
-                <i class="fab fa-twitter"></i>
-              </a>
-            </li>
-            <li class="nav-item me-3 me-lg-0">
-              <a class="nav-link" href="#" rel="nofollow" target="_blank">
-                <i class="fab fa-github"></i>
-              </a>
-            </li>
-            <li class="nav-item me-3 me-lg-0">
+              <span class="text-primary"> Hello, {{request.user}}</span>
                 <a class="nav-link" href="{% url 'authentication:logout' %}" rel="nofollow" target="_blank">
-                  <button class="btn btn-danger btn-sm"> LogOut
+                  <button class="btn btn-danger btn-sm"> Logout
                     </button>
                 </a>
               </li>

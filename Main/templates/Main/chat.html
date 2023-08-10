@@ -1,78 +1,101 @@
 {% include 'Main/base.html' %}
-
-<br><br><br><br>
+<br> <br> <br> <br> 
 <section style="background-color: #eee;">
     <div class="container py-5">
-  
-      <div class="row">
-  
-        
-  
-        <div class="col-md-12 col-lg-12 col-xl-12 ">
-  
-          <ul class="list-unstyled">
-            <li class="d-flex justify-content-between mb-4">
-              <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp" alt="avatar"
-                class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60">
-              <div class="card">
-                <div class="card-header d-flex justify-content-between p-3">
-                  <p class="fw-bold mb-0">Ram Hari</p>
-                  <p class="text-muted small mb-0"><i class="far fa-clock"></i> 12 mins ago</p>
-                </div>
-                <div class="card-body">
-                  <p class="mb-0">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                    labore et dolore magna aliqua.
-                  </p>
-                </div>
-              </div>
-            </li>
-            <li class="d-flex justify-content-between mb-4">
-              <div class="card w-100">
-                <div class="card-header d-flex justify-content-between p-3">
-                  <p class="fw-bold mb-0">Career BOT</p>
-                  <p class="text-muted small mb-0"><i class="far fa-clock"></i> 13 mins ago</p>
-                </div>
-                <div class="card-body">
-                  <p class="mb-0">
-                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-                    laudantium.
-                  </p>
-                </div>
-              </div>
-              <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-5.webp" alt="avatar"
-                class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
-            </li>
-            <li class="d-flex justify-content-between mb-4">
-              <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp" alt="avatar"
-                class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60">
-              <div class="card">
-                <div class="card-header d-flex justify-content-between p-3">
-                  <p class="fw-bold mb-0">Ram Hari</p>
-                  <p class="text-muted small mb-0"><i class="far fa-clock"></i> 10 mins ago</p>
-                </div>
-                <div class="card-body">
-                  <p class="mb-0">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                    labore et dolore magna aliqua.
-                  </p>
-                </div>
-              </div>
-            </li>
-            <li class="bg-white mb-3">
-              <div class="form-outline">
-                <textarea class="form-control" id="textAreaExample2" rows="4"></textarea>
-                <label class="form-label" for="textAreaExample2">Message</label>
-              </div>
-            </li>
-            <button type="button" class="btn btn-info btn-rounded float-end">Send</button>
-          </ul>
-  
-        </div>
-  
-      </div>
-  
-    </div>
-  </section>
 
+        <div class="row">
+
+            <div class="col-md-12 col-lg-12 col-xl-12">
+
+                <ul class="list-unstyled">
+                    {% for message in conversation %}
+                        <li class="{% if message.role == 'user' %}d-flex justify-content-end mb-4{% else %}d-flex justify-content-start mb-4{% endif %}">
+                            {% if message.role == 'user' %}
+                                <div class="card">
+                                    <div class="card-body">
+                                        <p class="mb-0">{{ message.content | safe }}</p>
+                                    </div>
+                                </div>
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp" alt="avatar"
+                                    class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60">
+                            {% elif message.role == 'assistant' %}
+                                <img src="https://i.pinimg.com/736x/fd/a1/3b/fda13b9d6d88f25a9d968901d319216a.jpg" alt="avatar"
+                                    class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
+                                <div class="card w-100">
+                                    <div id="assistant-message" class="card-body">
+                                        {{ message.content | safe}}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-xl-12">
+                <form id="chat-form" method="POST">
+                    {% csrf_token %}
+                    <div class="container">
+                    
+                            <div class="form-outline">
+                                <textarea class="form-control" id="user-input" name="user_input" rows="4"></textarea>
+                                <label class="form-label" for="textAreaExample2">Message</label>
+                              </div>
+                        <input type="submit" class="btn btn-primary m-3" value="Send">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatForm = document.getElementById('chat-form');
+        const userInput = document.getElementById('user-input');
+        const conversation = document.querySelector('ul');
+
+        // Scroll conversation to the bottom
+        conversation.scrollTop = conversation.scrollHeight;
+
+        // Submit the form when the user presses Enter key
+        userInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                chatForm.submit();
+            }
+        });
+
+        // Focus on the user input field
+        userInput.focus();
+    });
+
+    function contentToHtml(text) {
+        return text
+          .split('\n\n')
+            .filter(paragraph => paragraph.trim() !== '')
+            .map(paragraph => paragraph.trim())
+            .map(paragraph => paragraph.split('\n').join('<br>'))
+            // if : comes new linebreaks
+            .map(paragraph => paragraph.split(':').join('<br>'))
+            .map(paragraph => paragraph.split('!').join('<br>'))
+            .map(paragraph => paragraph.split('?').join('<br>'))
+            //if numbers br
+          .map(paragraph => `<p>${paragraph}</p>`)
+          .join('')
+      }
+
+    // assistant-message in contentToHtml
+    const assistantMessage = document.getElementById('assistant-message');
+    assistantMessage.innerHTML = contentToHtml(assistantMessage.innerHTML);
+
+
+    
+</script>
+<script type="module" src="https://md-block.verou.me/md-block.js"></script>
 {% include 'Main/footer.html' %}

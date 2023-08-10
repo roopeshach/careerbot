@@ -12,13 +12,14 @@ class CareerAssesmentAnswer(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-class CareerAssessment(models.Model):
+
+class CareerAssessmentResponse(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    question = models.ForeignKey(CareerAssesmentQuestion, on_delete=models.CASCADE)
-    answer = models.ForeignKey(CareerAssesmentAnswer, on_delete=models.CASCADE)
+    responses = models.TextField()  # Store responses as JSON or text format
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.username + self.question.question
+        return f"{self.user.username}'s Career Assessment Response"
 
 class CareerSuggestion(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -42,3 +43,9 @@ class IndustryInsight(models.Model):
 class UserFeedback(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     feedback = models.TextField()
+
+
+class UserChat(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
