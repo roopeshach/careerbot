@@ -1,14 +1,8 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import  CareerSuggestion, Resume, InterviewTip, IndustryInsight, UserFeedback, CareerAssesmentQuestion, CareerAssesmentAnswer, CareerAssessmentResponse
+from .models import  CareerAssesmentQuestion, CareerSuggesstionChat, IndustryInsightsChat, InterviewTipsChat, ResumeTipsChat, CareerAssesmentAnswer, CareerAssessmentResponse
 from django.utils.html import format_html
-
-admin.site.register(CareerSuggestion)
-admin.site.register(Resume)
-admin.site.register(InterviewTip)
-admin.site.register(IndustryInsight)
-admin.site.register(UserFeedback)
 
 class CareerAssementAnswerTablularInline(admin.TabularInline):
     model = CareerAssesmentAnswer
@@ -40,4 +34,9 @@ class CareerAssesmentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(CareerAssessmentResponse)
+admin.site.register(CareerSuggesstionChat)
+admin.site.register(IndustryInsightsChat)
+admin.site.register(InterviewTipsChat)
+admin.site.register(ResumeTipsChat)
+
 

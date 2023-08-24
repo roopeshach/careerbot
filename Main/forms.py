@@ -1,7 +1,6 @@
 # forms.py
 from django import forms
-from .models import CareerAssesmentQuestion
-
+from .models import CareerAssesmentQuestion, CareerSuggesstionChat, IndustryInsightsChat, InterviewTipsChat, ResumeTipsChat
 class CareerAssessmentForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -12,3 +11,26 @@ class CareerAssessmentForm(forms.Form):
             self.fields[f"question_{question.id}"] = forms.ChoiceField(
                 choices=choices, widget=forms.RadioSelect(attrs={'class': 'form-check-input'})
             )
+
+class CareerSuggesstionChatForm(forms.ModelForm):
+    class Meta:
+        model = CareerSuggesstionChat
+        fields = ['message']
+
+class IndustryInsightsChatForm(forms.ModelForm):
+    class Meta:
+        model = IndustryInsightsChat
+        fields = ['message']
+
+    
+class InterviewTipsChatForm(forms.ModelForm):
+    class Meta:
+        model = InterviewTipsChat
+        fields = ['message']
+
+class ResumeTipsChatForm(forms.ModelForm):
+    class Meta:
+        model = ResumeTipsChat
+        fields = ['message']
+
+        

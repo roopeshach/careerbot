@@ -19,33 +19,46 @@ class CareerAssessmentResponse(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username}'s Career Assessment Response"
+        return f"{self.user.username    }'s Career Assessment Response"
 
-class CareerSuggestion(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    suggestion = models.CharField(max_length=255)
-
-class Resume(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
-
-class InterviewTip(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tip = models.TextField()
-
-class IndustryInsight(models.Model):
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    industry = models.CharField(max_length=255)
-    job_roles = models.TextField()
-    future_prospects = models.TextField()
-
-class UserFeedback(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    feedback = models.TextField()
-
-
-class UserChat(models.Model):
+#models to store chat of careersuggesstion 
+class CareerSuggesstionChat(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_ai = models.BooleanField(default=False)
+    def __str__(self):
+        return f"{self.user.username}'s Chat"
+    
+#models to store chat of industryinsights
+class IndustryInsightsChat(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_ai = models.BooleanField(default=False)
+    def __str__(self):
+        return f"{self.user.username}'s Chat"
+    
+#models to store chat of interviewtips
+class InterviewTipsChat(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_ai = models.BooleanField(default=False)
+    def __str__(self):
+        return f"{self.user.username}'s Chat"
+    
+#models to store chat of resumetips
+class ResumeTipsChat(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_ai = models.BooleanField(default=False)
+    def __str__(self):
+        return f"{self.user.username}'s Chat"
+    
+    
