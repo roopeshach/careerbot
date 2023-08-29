@@ -33,6 +33,7 @@ class CareerAssesmentAdmin(admin.ModelAdmin):
     # inlines = [CareerAssementQuestionTabularInline]
 
 
+
 admin.site.register(CareerAssessmentResponse)
 admin.site.register(CareerSuggesstionChat)
 admin.site.register(IndustryInsightsChat)

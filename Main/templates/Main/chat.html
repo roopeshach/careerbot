@@ -9,27 +9,39 @@
 
                 <ul class="list-unstyled">
                     {% for message in conversation %}
-                        <li class="{% if message.role == 'user' %}d-flex justify-content-end mb-4{% else %}d-flex justify-content-start mb-4{% endif %}">
-                            {% if message.role == 'user' %}
-                                <div class="card">
-                                    <div class="card-body">
-                                        <p class="mb-0">{{ message.content | safe }}</p>
-                                    </div>
-                                </div>
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp" alt="avatar"
-                                    class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60">
-                            {% elif message.role == 'assistant' %}
+                        <li class="{% if message.is_ai %}{% if message.user == request.user %}d-flex justify-content-end mb-4{% else %}d-flex justify-content-start mb-4{% endif %}{% endif %}">
+                            {% if message.is_ai %}
+                                {% if message.user == request.user %}
                                 <img src="https://i.pinimg.com/736x/fd/a1/3b/fda13b9d6d88f25a9d968901d319216a.jpg" alt="avatar"
-                                    class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
-                                <div class="card w-100">
-                                    <div id="assistant-message" class="card-body">
-                                        {{ message.content | safe}}
-                                    </div>
+                                class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
+                            <div class="card w-100">
+                                <div id="assistant-message" class="card-body">
+                                    {{ message.message | safe}}
                                 </div>
+                            </div>
+                                {% else %}
+                                    <img src="https://i.pinimg.com/736x/fd/a1/3b/fda13b9d6d88f25a9d968901d319216a.jpg" alt="avatar"
+                                        class="rounded-circle d-flex align-self-start ms-3 shadow-1-strong" width="60">
+                                    <div class="card w-100">
+                                        <div id="assistant-message" class="card-body">
+                                            {{ message.message | safe }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <p class="mb-0">{{ message.message | safe }}</p>
+                                        </div>
+                                    </div>
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/avatar-6.webp" alt="avatar"
+                                        class="rounded-circle d-flex align-self-start me-3 shadow-1-strong" width="60">
                             {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
+                
+                
 
             </div>
 

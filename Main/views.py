@@ -10,7 +10,8 @@ from django.shortcuts import render
 from .forms import CareerAssessmentForm
 from .models import CareerAssessmentResponse
 from django.contrib import messages
-
+from .models import CareerSuggesstionChat, IndustryInsightsChat, InterviewTipsChat, ResumeTipsChat
+import json
 
 # Create your views here.
 @login_required
@@ -18,7 +19,7 @@ def index(request):
     # request.session.flush()
     return render(request, 'Main/index.html')
 
-import json
+
 
 def upload_career_assessment_data(request):
     with open(str(settings.BASE_DIR) + "/data.json", "r") as f:
@@ -36,12 +37,7 @@ def upload_career_assessment_data(request):
                 answer=answer_text,
                 is_active=True
             )
-
-    print("Career assessment data uploaded successfully.")
-
     return render(request, 'Main/index.html')
-
-
 
 @login_required
 def career_assessment(request):
@@ -86,17 +82,6 @@ def career_assessment(request):
         }
         return render(request, 'Main/career_assessment.html', context)
 
-
-
-
-def get_user_response(user):
-    try:
-        career_responses = CareerAssessmentResponse.objects.filter(user=user).latest('created_at')
-        career_responses = career_responses.responses
-    except CareerAssessmentResponse.DoesNotExist:
-        career_responses = ""
-    return career_responses
-
 @login_required
 def delete_user_assesment(request):
     user = request.user
@@ -108,6 +93,16 @@ def delete_user_assesment(request):
     else:
         messages.success(request, 'No career assessment to delete.')
     return redirect('Main:career-assesment')
+
+
+
+def get_user_response(user):
+    try:
+        career_responses = CareerAssessmentResponse.objects.filter(user=user).latest('created_at')
+        career_responses = career_responses.responses
+    except CareerAssessmentResponse.DoesNotExist:
+        career_responses = ""
+    return career_responses
 
 # This method formats the user responses as HTML for display
 def format_responses_as_html(responses):
@@ -147,44 +142,54 @@ def initialize_chatbot(prompt_data, choice):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a chatbot that assists with career-related questions."},
+            {"role": "system", "content": "You are a chatbot that assists with career-related questions. And will only limit with the information related to Career."},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=100,
+        max_tokens=500,
         temperature=0.5,
     )
 
     return response.choices[0].message['content']
-
+valid_choices = ['career_suggestion', 'industry_insights', 'interview_tips', 'resume_tips']
 
 # Career Suggestion Chatbot View
 @login_required
 def career_suggestion_chatbot_view(request, choice):
-    # Define valid choices
-    valid_choices = ['career_suggestion', 'industry_insights', 'interview_tips', 'resume_tips']
-
     if choice not in valid_choices:
         return redirect('Main:home')  # Redirect to home or some other page if the choice is not valid
 
-    # Set the session variable for the selected choice
+    # Set the choice as a session variable
     request.session['selected_choice'] = choice
 
     # Get the user's career assessment responses
     career_responses = get_user_response(request.user)
 
-    # Get the current conversation for the selected choice from session
-    conversation_key = f'{choice}_conversation'
-    conversation = request.session.get(conversation_key, [])
+    # Determine the appropriate chat model based on the choice
+    if choice == 'career_suggestion':
+        chat_model = CareerSuggesstionChat
+    elif choice == 'industry_insights':
+        chat_model = IndustryInsightsChat
+    elif choice == 'interview_tips':
+        chat_model = InterviewTipsChat
+    elif choice == 'resume_tips':
+        chat_model = ResumeTipsChat
 
+    # Fetch all conversation messages for the current user and choice
+    conversation = chat_model.objects.filter(user=request.user).order_by('created_at')
+
+    
     if request.method == 'POST':
         user_input = request.POST.get('user_input')
-
-        # Append user input to the conversation
+        print(user_input)
+        # Append user input to the conversation and save it in the database
         if user_input:
-            conversation.append({"role": "user", "content": user_input})
+            conversation.create(user=request.user, message=user_input, is_ai=False)
+
+        # Fetch all conversation messages for the current user and choice
+        conversation = chat_model.objects.filter(user=request.user).order_by('created_at')
 
         # Format prompts for the chatbot
-        prompts = [{"role": message["role"], "content": message["content"]} for message in conversation]
+        prompts = [{"role": "user", "content": message.message} for message in conversation if not message.is_ai]
 
         # Set up and invoke the ChatGPT model
         response = openai.ChatCompletion.create(
@@ -192,34 +197,44 @@ def career_suggestion_chatbot_view(request, choice):
             messages=prompts,
             api_key=openai.api_key,
             temperature=0.5,
-            max_tokens=100
+            max_tokens=500
         )
 
         # Extract chatbot replies from the response
         chatbot_replies = [message['message']['content'] for message in response['choices'] if message['message']['role'] == 'assistant']
 
-        # Append chatbot replies to the conversation
+        # Append chatbot replies to the conversation and save them in the database
         for reply in chatbot_replies:
-            conversation.append({"role": "assistant", "content": reply})
+            conversation.create(user=request.user, message=reply, is_ai=True)
 
-        # Update the conversation in the session
-        request.session[conversation_key] = conversation
+        conversation = chat_model.objects.filter(user=request.user).order_by('created_at')
 
-        return render(request, 'Main/chat.html', {'user_input': user_input, 'chatbot_replies': chatbot_replies, 'conversation': conversation})
+        return render(request, 'Main/chat.html', { 'conversation': conversation})
     else:
-        try:
-            # Load the previous conversation from session if exists
-            conversation = request.session[conversation_key]
-            return render(request, 'Main/chat.html', {'conversation': conversation})
-        except KeyError:
-            # If previous conversation does not exist, initialize the chatbot with prompt
-            if career_responses:
-                # Initialize chatbot with prompt
-                chatbot_prompt = initialize_chatbot(career_responses, choice)
-                conversation.append({"role": "assistant", "content": chatbot_prompt})
-                request.session[conversation_key] = conversation
+        # Initialize chatbot with user's career assessment responses
+        if career_responses:
+            #if previous chat exists send only that
+            if conversation.exists():
+                # Set up and invoke the ChatGPT model with that chat
+                response = openai.ChatCompletion.create(
+                    model='gpt-3.5-turbo',
+                    messages = [
+                        { "role" :"system", "content" : "".format([message for message in conversation]),},
+                        {"role": "user", "content" : "Continue this conversation now. Welcome me while starting too."}
+                        ],                
+                        max_tokens=500,
+                        temperature = 0.5
+                )
+                
+                #add response to db and provide to url
+
+                conversation.create(user=request.user, message=response.choices[0].message['content'], is_ai=True)
                 return render(request, 'Main/chat.html', {'conversation': conversation})
             else:
-                # Add message and redirect
-                messages.success(request, 'Please complete the career assessment first.')
-                return redirect('Main:career-assessment')
+                response = initialize_chatbot(career_responses, choice)
+                conversation.create(user=request.user, message=response, is_ai=True)
+                return render(request, 'Main/chat.html', {'conversation': conversation})
+        else:
+            # Add message and redirect
+            messages.success(request, 'Please complete the career assessment first.')
+            return redirect('Main:career-assessment')
