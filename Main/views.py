@@ -112,20 +112,13 @@ def format_responses_as_html(responses):
     return html
 
 # Initialize the ChatGPT model
-openai.api_key = "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"
+openai.api_key = "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"
 
 # This method initializes the chatbot and returns the chatbot's response
 def initialize_chatbot(prompt_data, choice):
-    choices = [
-        'career_suggestion',
-        'industry_insights',
-        'interview_tips',
-        'resume_tips'
-    ]
-
+    choices = ['career_suggestion','industry_insights','interview_tips', 'resume_tips']
     if choice.strip() not in choices:
         raise Exception('Invalid choice.')
-
     # Define the initial message for each choice
     initial_messages = {
         'career_suggestion': "You are a career suggestion bot. Your goal is to provide career suggestions based on the user's responses to career assessment questions. Here are the user's responses: Note(Provide output in html formatted tags.",
@@ -133,23 +126,20 @@ def initialize_chatbot(prompt_data, choice):
         'interview_tips': "You are an interview tips bot. Your goal is to provide interview tips based on the user's responses to career assessment questions. Here are the user's responses: Note(Provide output in html formatted tags.",
         'resume_tips': "You are a resume tips bot. Your goal is to provide resume tips based on the user's responses to career assessment questions. Here are the user's responses: Note(Provide output in html formatted tags."
     }
-
     initial_message = initial_messages[choice.strip()]
     formatted_responses = format_responses_as_html(json.loads(prompt_data))
     prompt = f"{initial_message}<br><br>{formatted_responses}"
-
     # Set up and invoke the ChatGPT model
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": "You are a chatbot that assists with career-related questions. And will only limit with the information related to Career."},
             {"role": "user", "content": prompt}
-        ],
-        max_tokens=500,
-        temperature=0.5,
+        ],max_tokens=500, temperature=0.5,
     )
-
     return response.choices[0].message['content']
+
+
 valid_choices = ['career_suggestion', 'industry_insights', 'interview_tips', 'resume_tips']
 
 # Career Suggestion Chatbot View
@@ -180,7 +170,6 @@ def career_suggestion_chatbot_view(request, choice):
     
     if request.method == 'POST':
         user_input = request.POST.get('user_input')
-        print(user_input)
         # Append user input to the conversation and save it in the database
         if user_input:
             conversation.create(user=request.user, message=user_input, is_ai=False)
@@ -215,6 +204,7 @@ def career_suggestion_chatbot_view(request, choice):
         if career_responses:
             #if previous chat exists send only that
             if conversation.exists():
+                print(openai.api_key, "key")
                 # Set up and invoke the ChatGPT model with that chat
                 response = openai.ChatCompletion.create(
                     model='gpt-3.5-turbo',
